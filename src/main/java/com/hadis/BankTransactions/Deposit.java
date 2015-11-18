@@ -42,7 +42,6 @@ public class Deposit {
 		if (upperBound.compareTo(depositAmount) < 0)
 			throw new DepositOutOfUpperBound(id);
 		initialBalance = initialBalance.add(addedDeposit);
-		
 	}
 	
 	public synchronized void withdrawFromAccount(BigDecimal withdrawnAmount)
@@ -56,7 +55,6 @@ public class Deposit {
 		if (depositAmount.compareTo(new BigDecimal(0)) <0)
 			throw new DepositNotEnough(id);
 		initialBalance = initialBalance.subtract(withdrawnAmount);
-		
 	}
 }
 

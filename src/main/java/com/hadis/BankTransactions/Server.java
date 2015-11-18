@@ -16,7 +16,7 @@ public class Server extends Thread{
 
 	private ServerSocket serverSocket;
 	private int port;
-	private ArrayList<Deposit> deposits = new ArrayList<Deposit>();
+	private static ArrayList<Deposit> deposits = new ArrayList<Deposit>();
 	private String serverLogFileAddr;
 	
 	public Server() throws IOException {
@@ -26,8 +26,8 @@ public class Server extends Thread{
 		
 	}
 	
-	public Server(String s){
-		
+	public Server(int i){
+		initializeServer();
 	}
 	
 	private Deposit makeDeposit(JSONObject jsonDeposit){
@@ -82,8 +82,10 @@ public class Server extends Thread{
 			throw new UnknownTransactionType(depositId);
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	private void sync(){
+		System.out.println("sync being executed...");
 		JSONObject core = new JSONObject();
 		core.put("port", port);
 		JSONArray jsonDeposits = new JSONArray();
@@ -91,7 +93,13 @@ public class Server extends Thread{
 			JSONObject tempDeposit = new JSONObject();
 			tempDeposit.put("customer", deposits.get(i).getName());
 			tempDeposit.put("id", deposits.get(i).getId());
-			tempDeposit.put("initialBalance", deposits.get(i).getInitialBalance());
+			try {
+				tempDeposit.put("initialBalance", findDepositById(deposits.get(i).getId()).getInitialBalance());
+				
+			} catch (DefinedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			tempDeposit.put("upperBound", deposits.get(i).getUpperBound());
 			jsonDeposits.add(tempDeposit);
 			
@@ -102,7 +110,7 @@ public class Server extends Thread{
 		
 		try {
 
-			FileWriter file = new FileWriter("test.json");
+			FileWriter file = new FileWriter("core.json");
 			file.write(core.toJSONString());
 			file.flush();
 			file.close();
@@ -117,14 +125,10 @@ public class Server extends Thread{
 		BufferedReader bufferReader = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			String command = bufferReader.readLine();
-			if (command.equals("sync")){
-				System.out.println("sync being executed...");
+			if (command.equals("sync"))
 				sync();
-			}
-			else{
-				System.out.println("here");
+			else
 				throw new InvalidServerCommand(command);
-			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -180,8 +184,6 @@ public class Server extends Thread{
 						error = e.sendMessage();
 						outToLog += " success:false" ;
 					}
-					
-					
 							
 					updateLogFile(outToLog);
 					
@@ -206,7 +208,7 @@ public class Server extends Thread{
 			Thread server = new Server();
 			server.start();
 			
-			Thread console = new Server("input"){
+			Thread console = new Server(0){
 				@Override
 				public void run(){
 					while (true){

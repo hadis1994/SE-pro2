@@ -1,18 +1,1 @@
-{
-	"port":8091,
-	"deposits":[
-		{
-			"customer": "Ali Alavi",
-			"id":"33227781",
-			"initialBalance":"1000",
-			"upperBound":"1000000"
-		},
-		{
-			"customer": "Reza Rezaei",
-			"id":"35527439",
-			"initialBalance":"0",
-			"upperBound":"0"
-		}
-	],
-	"outLog":"server.out"
-}
+{"port":8004,"outLog":"server.out","deposits":[{"upperBound":1000000,"initialBalance":3000,"id":"33227781","customer":"Ali Alavi"},{"upperBound":0,"initialBalance":0,"id":"35527439","customer":"Reza Rezaei"},{"upperBound":1000000,"initialBalance":3000,"id":"33227781","customer":"Ali Alavi"},{"upperBound":0,"initialBalance":0,"id":"35527439","customer":"Reza Rezaei"},{"upperBound":1000000,"initialBalance":3000,"id":"33227781","customer":"Ali Alavi"},{"upperBound":0,"initialBalance":0,"id":"35527439","customer":"Reza Rezaei"},{"upperBound":1000000,"initialBalance":3000,"id":"33227781","customer":"Ali Alavi"},{"upperBound":0,"initialBalance":0,"id":"35527439","customer":"Reza Rezaei"}]}
