@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE terminal SYSTEM "roles.dtd">
-<terminal id="21374" type="ATM">
+<terminal id="21375" type="ATM">
     <transaction deposit="33227781" id="1" success="true" type="deposit"/>
-    <transaction deposit="35527439" errorType="3" id="2" success="false" type="withdraw"/>
+</terminal>
+tion deposit="35527439" errorType="3" id="2" success="false" type="withdraw"/>
 </terminal>
