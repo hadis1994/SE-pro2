@@ -1,2 +1,2 @@
-terminalid:21374  terminalType:ATM  transactionId:1  transactionType: deposit  depositId:33227781  changedAmount:1000  depositBalance:2000
-terminalid:21374  terminalType:ATM  transactionId:2  transactionType: withdraw  depositId:35527439  changedAmount:10000  depositBalance:0
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:3000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false

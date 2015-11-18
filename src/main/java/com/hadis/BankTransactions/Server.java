@@ -163,21 +163,26 @@ public class Server extends Thread{
 					String []clientRequest = in.readUTF().split(" ");
 					
 					BigDecimal balance = new BigDecimal("0"); 
+					String outToLog = "";
+					outToLog = "terminalid:" + terminalInfo[1]
+							+ " terminalType:" + terminalInfo[2]
+							+ " transactionId:" + clientRequest[0]
+							+ " transactionType: " + clientRequest[1]
+							+ " depositId:" + clientRequest[3]
+							+ " changedAmount:" + clientRequest[2];
 					try {
 						carryOutTransaction(clientRequest[0] ,clientRequest[3], clientRequest[1], clientRequest[2]);
 						balance = findDepositById(clientRequest[3]).getInitialBalance();
+						outToLog += " depositBalance:" +balance.toString()
+								+ " success:true" ;
+						
 					} catch (DefinedException e) {
 						error = e.sendMessage();
+						outToLog += " success:false" ;
 					}
 					
-					String outToLog = "";
-					outToLog = "terminalid:" + terminalInfo[1] + " "
-							+ " terminalType:" + terminalInfo[2] + " "
-							+ " transactionId:" + clientRequest[0] + " "
-							+ " transactionType: " + clientRequest[1] + " "
-							+ " depositId:" + clientRequest[3] + " " 
-							+ " changedAmount:" + clientRequest[2] + " "
-							+ " depositBalance:" +balance.toString(); 
+					
+							
 					updateLogFile(outToLog);
 					
 					out = new DataOutputStream(server.getOutputStream());
