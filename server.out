@@ -1,16 +1,22 @@
-terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
-terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
-terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
-terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
-terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
-terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
-terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
-terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
-terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
-terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
-terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 success:false
 terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
 terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:2000 success:true
 terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
 terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:3000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:4000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:5000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:6000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:7000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:8000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:9000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:10000 success:true
+terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false
+terminalid:21374 terminalType:ATM transactionId:1 transactionType: deposit depositId:33227781 changedAmount:1000 depositBalance:11000 success:true
 terminalid:21374 terminalType:ATM transactionId:2 transactionType: withdraw depositId:35527439 changedAmount:10000 success:false

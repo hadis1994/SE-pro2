@@ -77,7 +77,7 @@ class Client extends Thread{
 	public void addToTransactions(Element tempTransaction){
 		String id = tempTransaction.getAttribute("id");
 		String type = tempTransaction.getAttribute("type");
-		String amount = tempTransaction.getAttribute("amount");
+		String amount = tempTransaction.getAttribute("amount").replace(",", "");
 		String deposit = tempTransaction.getAttribute("deposit");
 
 		transactions.add(new Transaction (id, type, amount, deposit));

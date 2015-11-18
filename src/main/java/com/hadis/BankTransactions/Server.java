@@ -18,23 +18,29 @@ public class Server extends Thread{
 	private int port;
 	private static ArrayList<Deposit> deposits = new ArrayList<Deposit>();
 	private String serverLogFileAddr;
+	private static boolean ifInit = false;
 	
 	public Server() throws IOException {
-		initializeServer();
-		serverSocket = new ServerSocket(port);
-		serverSocket.setSoTimeout(100000);
+		try {
+			if (!ifInit){
+				initializeServer();
+				ifInit = true;
+			}
+			serverSocket = new ServerSocket(port);
+			serverSocket.setSoTimeout(100000);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
-	
-	public Server(int i){
-		initializeServer();
-	}
+
 	
 	private Deposit makeDeposit(JSONObject jsonDeposit){
 		String name = jsonDeposit.get(new String("customer")).toString();
 		String id = jsonDeposit.get(new String("id")).toString();
-		BigDecimal initialBalance = new BigDecimal(jsonDeposit.get(new String("initialBalance")).toString());
-		BigDecimal upperBound = new BigDecimal (jsonDeposit.get(new String("upperBound")).toString());
+		BigDecimal initialBalance = new BigDecimal(jsonDeposit.get(new String("initialBalance")).toString().replace(",", ""));
+		BigDecimal upperBound = new BigDecimal (jsonDeposit.get(new String("upperBound")).toString().replace(",", ""));
 
 		return new Deposit(name, id, initialBalance, upperBound);
 	}
@@ -84,7 +90,22 @@ public class Server extends Thread{
 	
 	
 	@SuppressWarnings("unchecked")
-	private void sync(){
+	private synchronized void sync(){
+		
+		JSONParser parser = new JSONParser();
+		try {
+			JSONObject coreJSON = (JSONObject) parser.parse(new FileReader("core.json"));
+			port = Integer. parseInt(coreJSON.get(new String("port")).toString());			
+			serverLogFileAddr = coreJSON.get(new String ("outLog")).toString();
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e2){
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		
 		System.out.println("sync being executed...");
 		JSONObject core = new JSONObject();
 		core.put("port", port);
@@ -94,13 +115,13 @@ public class Server extends Thread{
 			tempDeposit.put("customer", deposits.get(i).getName());
 			tempDeposit.put("id", deposits.get(i).getId());
 			try {
-				tempDeposit.put("initialBalance", findDepositById(deposits.get(i).getId()).getInitialBalance());
+				tempDeposit.put("initialBalance", findDepositById(deposits.get(i).getId()).getInitialBalance().toString());
 				
 			} catch (DefinedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			tempDeposit.put("upperBound", deposits.get(i).getUpperBound());
+			tempDeposit.put("upperBound", deposits.get(i).getUpperBound().toString());
 			jsonDeposits.add(tempDeposit);
 			
 		}
@@ -110,7 +131,7 @@ public class Server extends Thread{
 		
 		try {
 
-			FileWriter file = new FileWriter("core.json");
+			FileWriter file = new FileWriter("core.json",false);
 			file.write(core.toJSONString());
 			file.flush();
 			file.close();
@@ -207,8 +228,7 @@ public class Server extends Thread{
 		try {
 			Thread server = new Server();
 			server.start();
-			
-			Thread console = new Server(0){
+			Thread console =new Server(){
 				@Override
 				public void run(){
 					while (true){
