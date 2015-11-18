@@ -115,14 +115,14 @@ public class Server extends Thread{
 			throws DefinedException{
 		BufferedReader bufferReader = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			if (bufferReader.ready()){
-				String command = bufferReader.readLine();
-				if (command.equals("sync")){
-					System.out.println("sync being executed...");//TODO: server log
-					sync();
-				}
-				else throw new InvalidServerCommand(command);
-				bufferReader.close();
+			String command = bufferReader.readLine();
+			if (command.equals("sync")){
+				System.out.println("sync being executed...");//TODO: server log
+				sync();
+			}
+			else{
+				System.out.println("here");
+				throw new InvalidServerCommand(command);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -136,23 +136,16 @@ public class Server extends Thread{
 	
 	public void run() {
 		while(true) {
-			
 			try {
-
 				System.out.println("Waiting for client on port " +
 				serverSocket.getLocalPort() + "...");
-				/*
-				try {
-					getServerCommand();
-				} catch (DefinedException e1) {
-					System.out.println(e1.sendMessage());
-				}
-				*/
+				
 				Socket server = serverSocket.accept();
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
 				
 				DataInputStream in = new DataInputStream(server.getInputStream());
-				int numOfTransactions = Integer.parseInt(in.readUTF());
+				String []terminalInfo = in.readUTF().split(" ");
+				int numOfTransactions = Integer.parseInt(terminalInfo[0]);
 				DataOutputStream out = new DataOutputStream(server.getOutputStream());
 				out.writeUTF(" requested for " + numOfTransactions + " transactions...");
 				

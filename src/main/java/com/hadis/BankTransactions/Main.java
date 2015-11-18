@@ -28,9 +28,8 @@ public class Main{
 		if (args.length <1)
 			System.out.println("Please give terminal.xml address");
 		else{
-			Client waitingClient = new Client(args[0]);
-			waitingClient.initializeClient();		
-			waitingClient.sendTransactionsToServer();
+			Client waitingClient = new Client(args[0]);	
+			waitingClient.start();
 		}
 	}
 }
@@ -47,6 +46,7 @@ class Client extends Thread{
 	
 	public Client(String path){
 		terminalAddr = path;
+		initializeClient();
 	}
 	
 	private ArrayList<Transaction> transactions = new ArrayList<Transaction>();
@@ -160,8 +160,8 @@ class Client extends Thread{
 		}
 	}
 	
-
-	public void sendTransactionsToServer(){
+	@Override
+	public void run(){
 		try {
 			
 			System.out.println("Connecting to " + serverIP +
