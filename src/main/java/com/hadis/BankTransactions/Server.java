@@ -26,6 +26,10 @@ public class Server extends Thread{
 		
 	}
 	
+	public Server(String s){
+		
+	}
+	
 	private Deposit makeDeposit(JSONObject jsonDeposit){
 		String name = jsonDeposit.get(new String("customer")).toString();
 		String id = jsonDeposit.get(new String("id")).toString();
@@ -64,8 +68,6 @@ public class Server extends Thread{
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
-		
 	}
 	
 	private void carryOutTransaction(String idOrSync,String depositId, String type, String amount)
@@ -109,7 +111,7 @@ public class Server extends Thread{
 		}
 	}
 	
-	private void getServerCommand()
+	public void getServerCommand()
 			throws DefinedException{
 		BufferedReader bufferReader = new BufferedReader(new InputStreamReader(System.in));
 		try {
@@ -128,6 +130,10 @@ public class Server extends Thread{
 		}
 	}
 	
+	
+	
+	
+	
 	public void run() {
 		while(true) {
 			
@@ -135,36 +141,35 @@ public class Server extends Thread{
 
 				System.out.println("Waiting for client on port " +
 				serverSocket.getLocalPort() + "...");
-				
+				/*
 				try {
 					getServerCommand();
 				} catch (DefinedException e1) {
 					System.out.println(e1.sendMessage());
 				}
-				
+				*/
 				Socket server = serverSocket.accept();
-			
-		
-				System.out.println("Just connected to "
-				      + server.getRemoteSocketAddress());
+				System.out.println("Just connected to " + server.getRemoteSocketAddress());
 				
-				DataInputStream in =
-				      new DataInputStream(server.getInputStream());
+				DataInputStream in = new DataInputStream(server.getInputStream());
+				int numOfTransactions = Integer.parseInt(in.readUTF());
+				DataOutputStream out = new DataOutputStream(server.getOutputStream());
+				out.writeUTF(" requested for " + numOfTransactions + " transactions...");
 				
-				String error = "Thank you for connecting to "
-						  + server.getLocalSocketAddress() + "\nGoodbye!";
-				//System.out.println(in.readUTF());
-				String []clientRequest = in.readUTF().split(" ");
-				try {
-					carryOutTransaction(clientRequest[0] ,clientRequest[3], clientRequest[1], clientRequest[2]);
-				} catch (DefinedException e) {
-					error = e.sendMessage();
+				
+				for(int i = 0 ; i <numOfTransactions ; i++){
+					in = new DataInputStream(server.getInputStream());
+					String error = "transaction done successfully";
+					String []clientRequest = in.readUTF().split(" ");
+					try {
+						carryOutTransaction(clientRequest[0] ,clientRequest[3], clientRequest[1], clientRequest[2]);
+					} catch (DefinedException e) {
+						error = e.sendMessage();
+					}
+					
+					out = new DataOutputStream(server.getOutputStream());
+					out.writeUTF(error);
 				}
-				
-				DataOutputStream out =
-				     new DataOutputStream(server.getOutputStream());
-				
-				out.writeUTF(error);
 				
 				server.close();
 				
@@ -180,8 +185,22 @@ public class Server extends Thread{
 	
 	public static void main(String [] args){
 		try {
-			Thread t = new Server();
-			t.start();
+			Thread server = new Server();
+			server.start();
+			
+			Thread console = new Server("input"){
+				@Override
+				public void run(){
+					while (true){
+						try {
+							getServerCommand();
+						} catch (DefinedException e1) {
+							System.out.println(e1.sendMessage());
+						}
+					}
+				}
+			};
+			console.start();
 		}catch(IOException e) {
 			e.printStackTrace();
 		}

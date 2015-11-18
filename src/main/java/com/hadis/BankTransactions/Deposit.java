@@ -35,24 +35,30 @@ public class Deposit {
 			throws DefinedException{
 		if (addedDeposit.compareTo(new BigDecimal(0))< 0)
 			throw new InvaliDepositdAmountType(id);
-		BigDecimal depositAmount = new BigDecimal(0);
-		depositAmount = depositAmount.add(initialBalance);
-		depositAmount = depositAmount.add(addedDeposit);
-		if (upperBound.compareTo(depositAmount) < 0)
-			throw new DepositOutOfUpperBound(id);
-		initialBalance = initialBalance.add(addedDeposit);
+		
+		synchronized (this){
+			BigDecimal depositAmount = new BigDecimal(0);
+			depositAmount = depositAmount.add(initialBalance);
+			depositAmount = depositAmount.add(addedDeposit);
+			if (upperBound.compareTo(depositAmount) < 0)
+				throw new DepositOutOfUpperBound(id);
+			initialBalance = initialBalance.add(addedDeposit);
+		}
 	}
 	
 	public void withdrawFromAccount(BigDecimal withdrawnAmount)
 			throws DefinedException{
 		if (withdrawnAmount.compareTo(new BigDecimal(0))< 0)
 			throw new InvaliDepositdAmountType(id);
-		BigDecimal depositAmount = new BigDecimal(0);
-		depositAmount = depositAmount.add(initialBalance);
-		depositAmount = depositAmount.subtract(withdrawnAmount);
-		if (depositAmount.compareTo(new BigDecimal(0)) <0)
-			throw new DepositNotEnough(id);
-		initialBalance = initialBalance.subtract(withdrawnAmount);
+		
+		synchronized (this){
+			BigDecimal depositAmount = new BigDecimal(0);
+			depositAmount = depositAmount.add(initialBalance);
+			depositAmount = depositAmount.subtract(withdrawnAmount);
+			if (depositAmount.compareTo(new BigDecimal(0)) <0)
+				throw new DepositNotEnough(id);
+			initialBalance = initialBalance.subtract(withdrawnAmount);
+		}
 	}
 }
 

@@ -30,7 +30,7 @@ class InvalidDepositIdException extends ClientException{
 	
 	@Override
 	public String sendMessage() {
-		return ("Error:: Customer with id: \"" + customerId + "\" does not exist.");
+		return ("Error 1 :: Customer with id: \"" + customerId + "\" does not exist.");
 	}
 }
 
@@ -44,7 +44,7 @@ class DepositOutOfUpperBound extends ClientException{
 
 	@Override
 	public String sendMessage() {
-		return ("Error:: Cannot make changes to Customer with id: \"" 
+		return ("Error 2 :: Cannot make changes to Customer with id: \"" 
 							+ customerId + "\" added amount exceeds upper bound.");
 	}
 }
@@ -59,7 +59,7 @@ class DepositNotEnough extends ClientException{
 
 	@Override
 	public String sendMessage() {
-		return ("Error:: Cannot make changes to Customer with id: \"" 
+		return ("Error 3 :: Cannot make changes to Customer with id: \"" 
 							+ customerId + "\" withdrawn amount exceeds deposit balance.");
 	}
 }
@@ -73,7 +73,7 @@ class InvaliDepositdAmountType extends ClientException{
 	
 	@Override
 	public String sendMessage(){
-		return ("Error:: in changed amount of deposit for Customer with id: \"" 
+		return ("Error 4 :: in changed amount of deposit for Customer with id: \"" 
 				+ customerId + "\", amount cannot be negative.");
 	}
 }
@@ -87,7 +87,7 @@ class UnknownTransactionType extends ClientException {
 	
 	@Override
 	public String sendMessage(){
-		return ("Error:: Cannot make changes for Customer with id: \""
+		return ("Error 5 :: Cannot make changes for Customer with id: \""
 							+ customerId + "\" due to unknown transaction type.");
 						
 	}
@@ -104,7 +104,7 @@ class InvalidServerCommand extends DefinedException{
 	
 	@Override
 	public String sendMessage() {
-		return "Error:: Unknown server command: \""+ command + '\"';
+		return "Error 6 :: Unknown server command: \""+ command + '\"';
 	}
 
 }

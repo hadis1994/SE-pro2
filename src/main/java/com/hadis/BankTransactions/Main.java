@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
-
 import org.xml.sax.SAXException;
 
 import java.io.*;
@@ -34,14 +39,15 @@ class Client extends Thread{
 	
 	private String serverIP;
 	private int port;
-	private String clientLogFileAddr;
 	private String message;
+	private String clientLogFileAddr;
+	private String terminalId;
+	private String terminalType;
 	private String terminalAddr;
 	
 	public Client(String path){
 		terminalAddr = path;
 	}
-	
 	
 	private ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 	private class Transaction{
@@ -55,6 +61,9 @@ class Client extends Thread{
 		public String type;
 		public String amount;
 		public String deposit;
+		public String errorType = "";
+		public boolean success;
+		
 	}
 	
 	public String getIP(){
@@ -75,13 +84,17 @@ class Client extends Thread{
 	}
 	
 	public void initializeClient (){
-		File terminalInfo = new File ("../../../terminal.xml");
+		File terminalInfo = new File (terminalAddr);
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(terminalInfo);
 			
 			doc.getDocumentElement().normalize();
+			
+			NodeList terminalXMLInfo = doc.getElementsByTagName("terminal");
+			terminalId = ((Element)(terminalXMLInfo.item(0))).getAttribute("id");
+			terminalType =  ((Element)(terminalXMLInfo.item(0))).getAttribute("type");
 			
 			NodeList serverInfo = doc.getElementsByTagName("server");
 			serverIP = ((Element)(serverInfo.item(0))).getAttribute("ip");
@@ -95,72 +108,98 @@ class Client extends Thread{
 				addToTransactions((Element)(transactionList.item(i)));
 			
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
 	}
 	
-	
-	/*
-	
-	public void sendTransactionsToServer(){
-		try {
+	public void createLogFile(){
+		DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder icBuilder;
+		Document doc;
+		Element e;
+		try{
+			icBuilder = icFactory.newDocumentBuilder();
+			doc = icBuilder.newDocument();
+			Element rootElement = doc.createElement("terminal");
+			rootElement.setAttribute("id", terminalId);
+			rootElement.setAttribute("type", terminalType);
+			for (int i = 0 ; i < transactions.size() ; i++){
+				e = doc.createElement("transaction");
+				e.setAttribute("id", transactions.get(i).id);
+				e.setAttribute("type", transactions.get(i).type);
+				e.setAttribute("deposit", transactions.get(i).deposit);
+				e.setAttribute("success", new Boolean (transactions.get(i).success).toString());
+				if (! transactions.get(i).success)
+					e.setAttribute("errorType", transactions.get(i).errorType );
+				rootElement.appendChild(e);
+			}
 
-			System.out.println("Connecting to " + serverIP + " on port " + port);
-			Socket client = new Socket(serverIP, port);
-			System.out.println("Just connected to " + client.getRemoteSocketAddress());
+			doc.appendChild(rootElement);
+			try {
+				Transformer tr = TransformerFactory.newInstance().newTransformer();
+				tr.setOutputProperty(OutputKeys.INDENT, "yes");
+				tr.setOutputProperty(OutputKeys.METHOD, "xml");
+				tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+				tr.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "roles.dtd");
+				tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+				
+				tr.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(clientLogFileAddr)));
+
+			} catch (TransformerException te) {
+				System.out.println(te.getMessage());
+			} catch (IOException ioe) {
+	        	System.out.println(ioe.getMessage());
+	        }
 			
-			OutputStream outToServer = client.getOutputStream();
-			DataOutputStream out = new DataOutputStream(outToServer);
-			
-			String numOfTransactions =( new Integer(transactions.size())).toString();
-			out.writeUTF(numOfTransactions);
-			
-			InputStream inFromServer = client.getInputStream();
-			DataInputStream in = new DataInputStream(inFromServer);
-			System.out.println("Server says " + in.readUTF());
-			
-			client.close();
-		}catch(IOException e){
-			e.printStackTrace();
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 	}
 	
-	*/
-	
-	
+
 	public void sendTransactionsToServer(){
 		try {
-			for (int i = 0 ; i < transactions.size() ; i++){
 			
-				System.out.println("Connecting to " + serverIP +
-				" on port " + port);
-				Socket client = new Socket(serverIP, port);
-				System.out.println("Just connected to " 
-				+ client.getRemoteSocketAddress());
+			System.out.println("Connecting to " + serverIP +
+			" on port " + port);
+			Socket client = new Socket(serverIP, port);
+			System.out.println("Just connected to " 
+			+ client.getRemoteSocketAddress());
+			
+			
+			OutputStream outToServer = client.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			out.writeUTF((new Integer (transactions.size())).toString());
+			InputStream inFromServer = client.getInputStream();
+			DataInputStream in = new DataInputStream(inFromServer);
+			System.out.println("Servers says" + in.readUTF());
 				
-				OutputStream outToServer = client.getOutputStream();
-				DataOutputStream out = new DataOutputStream(outToServer);
+			for (int i = 0; i < transactions.size(); i++){
 				
-				//out.writeUTF("Hello from " + client.getLocalSocketAddress());
+				outToServer = client.getOutputStream();
+				out = new DataOutputStream(outToServer);
 				out.writeUTF(transactions.get(i).id + " " + transactions.get(i).type +
 						" " + transactions.get(i).amount + " " + transactions.get(i).deposit);
 				
-				
-				InputStream inFromServer = client.getInputStream();
-				DataInputStream in =
-				                new DataInputStream(inFromServer);
-				System.out.println("Server says " + in.readUTF());
-				
-				
-				client.close();
+				inFromServer = client.getInputStream();
+				in = new DataInputStream(inFromServer);
+				message = in.readUTF();	
+				System.out.println("Server says " + message);
+				String[] tempMessage = message.split(" ");
+				if (tempMessage[0].equals("Error")) {
+					transactions.get(i).success = false;
+					transactions.get(i).errorType = tempMessage[1];
+				}
+				else 
+					transactions.get(i).success = true;
 			}
+				
+			client.close();
+			createLogFile();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
