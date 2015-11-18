@@ -72,6 +72,7 @@ public class Server extends Thread{
 	
 	private void carryOutTransaction(String idOrSync,String depositId, String type, String amount)
 			throws DefinedException{
+		
 		Deposit currentDeposit = findDepositById(depositId);
 		if (type.equals("deposit"))
 			currentDeposit.depositIntoAccount(new BigDecimal(amount));
@@ -117,7 +118,7 @@ public class Server extends Thread{
 		try {
 			String command = bufferReader.readLine();
 			if (command.equals("sync")){
-				System.out.println("sync being executed...");//TODO: server log
+				System.out.println("sync being executed...");
 				sync();
 			}
 			else{
@@ -130,9 +131,16 @@ public class Server extends Thread{
 		}
 	}
 	
-	
-	
-	
+	public synchronized void updateLogFile(String transaction){
+		
+		try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(serverLogFileAddr, true)))) {
+		    out.println(transaction);
+
+		}catch (IOException e) {
+		    e.printStackTrace();
+		}
+
+	}
 	
 	public void run() {
 		while(true) {
@@ -149,16 +157,28 @@ public class Server extends Thread{
 				DataOutputStream out = new DataOutputStream(server.getOutputStream());
 				out.writeUTF(" requested for " + numOfTransactions + " transactions...");
 				
-				
 				for(int i = 0 ; i <numOfTransactions ; i++){
 					in = new DataInputStream(server.getInputStream());
 					String error = "transaction done successfully";
 					String []clientRequest = in.readUTF().split(" ");
+					
+					BigDecimal balance = new BigDecimal("0"); 
 					try {
 						carryOutTransaction(clientRequest[0] ,clientRequest[3], clientRequest[1], clientRequest[2]);
+						balance = findDepositById(clientRequest[3]).getInitialBalance();
 					} catch (DefinedException e) {
 						error = e.sendMessage();
 					}
+					
+					String outToLog = "";
+					outToLog = "terminalid:" + terminalInfo[1] + " "
+							+ " terminalType:" + terminalInfo[2] + " "
+							+ " transactionId:" + clientRequest[0] + " "
+							+ " transactionType: " + clientRequest[1] + " "
+							+ " depositId:" + clientRequest[3] + " " 
+							+ " changedAmount:" + clientRequest[2] + " "
+							+ " depositBalance:" +balance.toString(); 
+					updateLogFile(outToLog);
 					
 					out = new DataOutputStream(server.getOutputStream());
 					out.writeUTF(error);

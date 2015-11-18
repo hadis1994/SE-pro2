@@ -42,10 +42,10 @@ class Client extends Thread{
 	private String clientLogFileAddr;
 	private String terminalId;
 	private String terminalType;
-	private String terminalAddr;
+	private String terminalXMLAddr;
 	
 	public Client(String path){
-		terminalAddr = path;
+		terminalXMLAddr = path;
 		initializeClient();
 	}
 	
@@ -84,7 +84,7 @@ class Client extends Thread{
 	}
 	
 	public void initializeClient (){
-		File terminalInfo = new File (terminalAddr);
+		File terminalInfo = new File (terminalXMLAddr);
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -173,7 +173,9 @@ class Client extends Thread{
 			
 			OutputStream outToServer = client.getOutputStream();
 			DataOutputStream out = new DataOutputStream(outToServer);
-			out.writeUTF((new Integer (transactions.size())).toString());
+			String terminalInfoForServer = (new Integer (transactions.size())).toString() + 
+										" " + terminalId.toString() + " " + terminalType;
+			out.writeUTF(terminalInfoForServer);
 			InputStream inFromServer = client.getInputStream();
 			DataInputStream in = new DataInputStream(inFromServer);
 			System.out.println("Servers says" + in.readUTF());
